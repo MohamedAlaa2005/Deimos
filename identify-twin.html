@@ -11,20 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&family=JetBrains+Mono:wght@400;500;600;700&family=Syne:wght@700;800;850&display=block">
-  <link rel="prefetch" href="/mars-chunking.html">
-  <link rel="prefetch" href="/moon-chunking.html">
   <style>
-    @view-transition {
-      navigation: auto;
-    }
-    ::view-transition-old(root),
-    ::view-transition-new(root) {
-      animation-duration: 0.25s;
-      animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .header {
-      view-transition-name: site-header;
-    }
     :root {
       --bg: #000000;
       --ink: #ffffff;
@@ -416,37 +403,98 @@
       z-index: 2;
     }
 
+    /* ORBITAL RETICLE BACKGROUND RING */
+    .orbital-reticle {
+      position: absolute;
+      width: 290px;
+      height: 290px;
+      border-radius: 50%;
+      border: 1px dashed rgba(255, 255, 255, 0.16);
+      pointer-events: none;
+      transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.4s ease,
+                  opacity 0.4s ease;
+    }
+
     .celestial-canvas {
       width: 260px;
       height: 260px;
       border-radius: 50%;
       filter: drop-shadow(0 0 38px rgba(0,0,0,0.85));
-      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
-                  filter 0.4s ease;
+      transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                  filter 0.5s ease,
+                  opacity 0.45s ease;
       cursor: pointer;
       position: relative;
       z-index: 3;
     }
 
-    /* CLEAN REFINED HOVER STATES */
-    .portal-card:hover {
-      transform: translateY(-6px);
-    }
-    .card-mars:hover {
-      border-color: var(--mars-glow);
-      box-shadow: 0 24px 60px rgba(249, 115, 22, 0.35), 0 0 0 1px var(--mars-glow);
-    }
-    .card-mars:hover .celestial-canvas {
-      transform: scale(1.06);
-      filter: drop-shadow(0 0 45px rgba(249, 115, 22, 0.55));
-    }
-    .card-moon:hover {
+    /* ==================================================================== */
+    /* ULTRA-CREATIVE OPPOSITE-DIRECTION HOVER ORBIT MECHANICS               */
+    /* ==================================================================== */
+
+    /* HOVER MOON CARD (RIGHT CARD):
+       MOON SWOOPS ACROSS TOWARD THE LEFT (OPPOSITE DIRECTION)
+       WHILE MARS MOVES TO THE RIGHT IN BACKGROUND RECESSION */
+    .portal-grid.hover-moon .card-moon {
       border-color: var(--moon-glow);
-      box-shadow: 0 24px 60px rgba(226, 232, 240, 0.3), 0 0 0 1px var(--moon-glow);
+      box-shadow: 0 32px 84px rgba(226, 232, 240, 0.36), 0 0 0 1px var(--moon-glow);
+      transform: translateY(-8px);
     }
-    .card-moon:hover .celestial-canvas {
-      transform: scale(1.06);
-      filter: drop-shadow(0 0 45px rgba(226, 232, 240, 0.5));
+    .portal-grid.hover-moon .card-moon .celestial-canvas {
+      transform: translate(-130px, -16px) scale(1.18);
+      filter: drop-shadow(0 0 68px rgba(226, 232, 240, 0.65));
+    }
+    .portal-grid.hover-moon .card-moon .orbital-reticle {
+      transform: translate(-130px, -16px) rotate(-90deg) scale(1.12);
+      border-color: rgba(226, 232, 240, 0.6);
+    }
+
+    /* RECIPROCAL MOTION ON MARS CARD (LEFT CARD) */
+    .portal-grid.hover-moon .card-mars {
+      border-color: rgba(255, 255, 255, 0.14);
+      opacity: 0.75;
+    }
+    .portal-grid.hover-moon .card-mars .celestial-canvas {
+      transform: translate(65px, 12px) scale(0.85);
+      opacity: 0.55;
+      filter: blur(1.2px) drop-shadow(0 0 20px rgba(249, 115, 22, 0.28));
+    }
+    .portal-grid.hover-moon .card-mars .orbital-reticle {
+      transform: translate(65px, 12px) scale(0.85);
+      opacity: 0.35;
+    }
+
+    /* HOVER MARS CARD (LEFT CARD):
+       MARS SWOOPS ACROSS TOWARD THE RIGHT (OPPOSITE DIRECTION)
+       WHILE MOON MOVES TO THE LEFT IN BACKGROUND RECESSION */
+    .portal-grid.hover-mars .card-mars {
+      border-color: var(--mars-glow);
+      box-shadow: 0 32px 84px rgba(249, 115, 22, 0.4), 0 0 0 1px var(--mars-glow);
+      transform: translateY(-8px);
+    }
+    .portal-grid.hover-mars .card-mars .celestial-canvas {
+      transform: translate(130px, -16px) scale(1.18);
+      filter: drop-shadow(0 0 68px rgba(249, 115, 22, 0.75));
+    }
+    .portal-grid.hover-mars .card-mars .orbital-reticle {
+      transform: translate(130px, -16px) rotate(90deg) scale(1.12);
+      border-color: rgba(249, 115, 22, 0.6);
+    }
+
+    /* RECIPROCAL MOTION ON MOON CARD (RIGHT CARD) */
+    .portal-grid.hover-mars .card-moon {
+      border-color: rgba(255, 255, 255, 0.14);
+      opacity: 0.75;
+    }
+    .portal-grid.hover-mars .card-moon .celestial-canvas {
+      transform: translate(-65px, 12px) scale(0.85);
+      opacity: 0.55;
+      filter: blur(1.2px) drop-shadow(0 0 20px rgba(226, 232, 240, 0.25));
+    }
+    .portal-grid.hover-mars .card-moon .orbital-reticle {
+      transform: translate(-65px, 12px) scale(0.85);
+      opacity: 0.35;
     }
 
     /* CARD TITLES */
@@ -571,7 +619,10 @@
       .container { padding: 110px 16px 40px; }
       .celestial-stage { height: 230px; }
       .celestial-canvas { width: 200px; height: 200px; }
+      .orbital-reticle { width: 220px; height: 220px; }
       .binary-orbit-visual { display: none; }
+      .portal-grid.hover-moon .card-moon .celestial-canvas { transform: translate(-30px, -10px) scale(1.08); }
+      .portal-grid.hover-mars .card-mars .celestial-canvas { transform: translate(30px, -10px) scale(1.08); }
       .earth-strip { flex-direction: column; gap: 8px; text-align: center; border-radius: 18px; }
     }
   </style>
@@ -630,6 +681,7 @@
         <!-- MARS CARD (LEFT) -->
         <a class="portal-card card-mars" id="card-mars" href="/mars-chunking.html" title="Explore Mars Chunking Simulator">
           <div class="celestial-stage">
+            <div class="orbital-reticle" aria-hidden="true"></div>
             <canvas id="mars-canvas" class="celestial-canvas" width="300" height="300" aria-label="Mars 3D Celestial Body"></canvas>
           </div>
 
@@ -664,6 +716,7 @@
         <!-- MOON CARD (RIGHT) -->
         <a class="portal-card card-moon" id="card-moon" href="/moon-chunking.html" title="Explore Moon Chunking Simulator">
           <div class="celestial-stage">
+            <div class="orbital-reticle" aria-hidden="true"></div>
             <canvas id="moon-canvas" class="celestial-canvas" width="300" height="300" aria-label="Moon 3D Celestial Body"></canvas>
           </div>
 
@@ -891,23 +944,6 @@
           }
         });
       }
-
-      // ====================================================================
-      // SEAMLESS SINGLE-PAGE NAVIGATION & BFCACHE STATE RESTORATION
-      // ====================================================================
-      function resetPageState() {
-        document.body.style.opacity = '1';
-        document.body.style.pointerEvents = 'auto';
-        document.body.classList.remove('is-transitioning', 'transition-mars', 'transition-moon');
-        const staleOverlay = document.getElementById('celestial-transition-overlay');
-        if (staleOverlay) staleOverlay.remove();
-        const staleCanvas = document.getElementById('transition-canvas');
-        if (staleCanvas) staleCanvas.remove();
-      }
-
-      window.addEventListener('pageshow', resetPageState);
-      window.addEventListener('load', resetPageState);
-      resetPageState();
     })();
   </script>
 </body>

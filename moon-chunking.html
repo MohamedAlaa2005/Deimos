@@ -25,18 +25,6 @@
   <script src="/assets/vendor/three.min.js"></script>
 
   <style>
-    @view-transition {
-      navigation: auto;
-    }
-    ::view-transition-old(root),
-    ::view-transition-new(root) {
-      animation-duration: 0.25s;
-      animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .header {
-      view-transition-name: site-header;
-    }
-
     :root {
       --bg: #000000;
       --ink: #ffffff;
@@ -269,17 +257,6 @@
       scrollbar-width: none;
       -ms-overflow-style: none;
       transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease;
-      animation: telemetryWindowEntrance 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-    @keyframes telemetryWindowEntrance {
-      from {
-        opacity: 0;
-        transform: translateY(-50%) translateX(22px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(-50%) translateX(0);
-      }
     }
     .telemetry-floating-window::-webkit-scrollbar {
       display: none;
@@ -1294,6 +1271,19 @@
       animation: none !important;
       opacity: 0 !important;
       visibility: hidden !important;
+    }
+
+    /* VERTICAL LASER BEAM REACHING UPWARDS */
+    .marker-laser-beam {
+      position: absolute;
+      left: 50%;
+      bottom: 24px;
+      width: 2px;
+      height: 90px;
+      transform: translateX(-50%);
+      background: linear-gradient(to top, rgba(155, 140, 255, 0.75), rgba(155, 140, 255, 0.2) 60%, transparent 100%);
+      box-shadow: 0 0 10px rgba(155, 140, 255, 0.5);
+      pointer-events: none;
     }
 
     /* PIN INNER WRAPPER (ANIMATION & HOVER SCALE OPERATE HERE SAFELY) */
@@ -2576,71 +2566,6 @@
       const atmoMesh = new THREE.Mesh(atmoGeo, atmoMat);
       planetGroup.add(atmoMesh);
 
-      // 3D HOLOGRAPHIC PLANETARY GRID SYSTEM (SURFACE CHUNK DIVIDING LINES)
-      let planetaryGridGroup = null;
-      let planetaryGridLines = [];
-
-      function createHolographicPlanetGrid(radius, colorHex) {
-        const gridGroup = new THREE.Group();
-        const latSteps = [-75, -60, -45, -30, -15, 0, 15, 30, 45, 60, 75];
-        const lines = [];
-
-        latSteps.forEach(lat => {
-          const phi = (90 - lat) * (Math.PI / 180);
-          const rRing = radius * Math.sin(phi);
-          const yRing = radius * Math.cos(phi);
-          const points = [];
-          for (let i = 0; i <= 64; i++) {
-            const theta = (i / 64) * Math.PI * 2;
-            points.push(new THREE.Vector3(rRing * Math.cos(theta), yRing, rRing * Math.sin(theta)));
-          }
-          const geom = new THREE.BufferGeometry().setFromPoints(points);
-          const isEquator = lat === 0;
-          const mat = new THREE.LineBasicMaterial({
-            color: isEquator ? 0xffffff : 0xd1d5db,
-            transparent: true,
-            opacity: isEquator ? 0.40 : 0.16,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false
-          });
-          const line = new THREE.Line(geom, mat);
-          gridGroup.add(line);
-          lines.push({ line, mat, baseOpacity: isEquator ? 0.40 : 0.16, y: yRing });
-        });
-
-        for (let lng = 0; lng < 360; lng += 15) {
-          const points = [];
-          const theta = (lng + 180) * (Math.PI / 180);
-          for (let i = 0; i <= 48; i++) {
-            const lat = -90 + (i / 48) * 180;
-            const phi = (90 - lat) * (Math.PI / 180);
-            const x = -(radius * Math.sin(phi) * Math.cos(theta));
-            const z = radius * Math.sin(phi) * Math.sin(theta);
-            const y = radius * Math.cos(phi);
-            points.push(new THREE.Vector3(x, y, z));
-          }
-          const geom = new THREE.BufferGeometry().setFromPoints(points);
-          const isPrime = (lng === 0 || lng === 180);
-          const mat = new THREE.LineBasicMaterial({
-            color: isPrime ? 0xffffff : 0xd1d5db,
-            transparent: true,
-            opacity: isPrime ? 0.36 : 0.14,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false
-          });
-          const line = new THREE.Line(geom, mat);
-          gridGroup.add(line);
-          lines.push({ line, mat, baseOpacity: isPrime ? 0.36 : 0.14, y: 0 });
-        }
-
-        return { gridGroup, lines };
-      }
-
-      const moonGridData = createHolographicPlanetGrid(planetRadius * 1.002, 0x00e5ff);
-      planetaryGridGroup = moonGridData.gridGroup;
-      planetaryGridLines = moonGridData.lines;
-      planetGroup.add(planetaryGridGroup);
-
       // 3D VOLUMETRIC SPHERICAL BEACON (SLEEK HOLOGRAPHIC HEMISPHERE LANDING POINT)
       const beaconGroup = new THREE.Group();
       beaconGroup.visible = false;
@@ -3172,17 +3097,11 @@
           if (locateCoordsBtn) {
             locateCoordsBtn.innerHTML = '<span style="font-size:14px;">⊞</span><span>LOCATE & LOCK GRID CHUNK</span>';
           }
-          if (planetaryGridLines.length) {
-            planetaryGridLines.forEach(item => { item.mat.opacity = item.baseOpacity; });
-          }
         } else {
           if (modePointBtn) modePointBtn.classList.add('is-active');
           if (modeChunkBtn) modeChunkBtn.classList.remove('is-active');
           if (locateCoordsBtn) {
             locateCoordsBtn.innerHTML = '<span style="font-size:14px;">⦿</span><span>LOCATE & LOCK EXACT POINT</span>';
-          }
-          if (planetaryGridLines.length) {
-            planetaryGridLines.forEach(item => { item.mat.opacity = item.baseOpacity * 0.35; });
           }
         }
 

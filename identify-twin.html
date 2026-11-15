@@ -657,8 +657,8 @@
       z-index: 9999;
       pointer-events: none;
       opacity: 0;
-      background: radial-gradient(circle at 30% 50%, rgba(18, 12, 10, 0.5) 0%, rgba(0, 0, 0, 0.94) 85%);
-      transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      background: #000000;
+      transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       overflow: hidden;
     }
     .celestial-transition-overlay.is-active {
@@ -671,122 +671,6 @@
       width: 100%;
       height: 100%;
       display: block;
-    }
-    .transition-hud {
-      position: absolute;
-      top: 50%;
-      right: min(9vw, 120px);
-      transform: translateY(-50%) translateX(60px);
-      width: min(90vw, 440px);
-      padding: 34px 30px;
-      border-radius: 26px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      -webkit-backdrop-filter: blur(28px) saturate(190%);
-      backdrop-filter: blur(28px) saturate(190%);
-      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.75), inset 0 1px 1px rgba(255, 255, 255, 0.35);
-      opacity: 0;
-      transition: all 0.65s cubic-bezier(0.16, 1, 0.3, 1) 0.18s;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      z-index: 10;
-    }
-    .celestial-transition-overlay.is-active .transition-hud {
-      opacity: 1;
-      transform: translateY(-50%) translateX(0);
-    }
-    .hud-top-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      color: var(--accent-soft);
-      text-transform: uppercase;
-    }
-    .hud-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--accent-soft);
-      box-shadow: 0 0 12px var(--accent-soft);
-      animation: hudDotPulse 1s infinite alternate ease-in-out;
-    }
-    @keyframes hudDotPulse {
-      from { opacity: 0.4; transform: scale(0.85); }
-      to { opacity: 1; transform: scale(1.2); }
-    }
-    .hud-sub-title {
-      font-size: clamp(22px, 2.4vw, 28px);
-      font-weight: 850;
-      letter-spacing: -0.02em;
-      line-height: 1.15;
-      margin: 0;
-      text-transform: uppercase;
-    }
-    .hud-matrix-info {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-    }
-    .hud-stat {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-      gap: 8px;
-    }
-    .hud-label {
-      color: var(--ink-muted);
-      letter-spacing: 0.08em;
-    }
-    .hud-val {
-      font-weight: 600;
-      color: #fff;
-    }
-    .hud-val.pulse {
-      color: var(--accent-soft);
-      animation: hudTextPulse 1.2s infinite ease-in-out;
-    }
-    @keyframes hudTextPulse {
-      0%, 100% { opacity: 0.7; }
-      50% { opacity: 1; }
-    }
-    .hud-progress-wrap {
-      width: 100%;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 999px;
-      overflow: hidden;
-      position: relative;
-    }
-    .hud-progress-bar {
-      height: 100%;
-      width: 0%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, var(--accent) 0%, #ffffff 100%);
-      box-shadow: 0 0 16px var(--accent-soft);
-      transition: width 0.08s linear;
-    }
-    @media (max-width: 900px) {
-      .transition-hud {
-        top: auto;
-        bottom: 30px;
-        right: 50%;
-        transform: translateX(50%) translateY(40px);
-        width: calc(100vw - 32px);
-        padding: 22px 18px;
-      }
-      .celestial-transition-overlay.is-active .transition-hud {
-        transform: translateX(50%) translateY(0);
-      }
     }
   </style>
 </head>
@@ -951,30 +835,6 @@
   <!-- CINEMATIC CELESTIAL TRANSITION STAGE TO CHUNKING SIMULATOR -->
   <div id="celestial-transition-overlay" class="celestial-transition-overlay" aria-hidden="true">
     <canvas id="transition-canvas" class="transition-canvas"></canvas>
-    <div class="transition-hud mono" id="transition-hud">
-      <div class="hud-top-badge" id="hud-top-badge">
-        <span class="hud-dot"></span>
-        <span id="hud-target-name">ORBITAL INSERTION // MARS</span>
-      </div>
-      <div class="hud-sub-title syne" id="hud-sub-title">CALIBRATING CHUNKING GRID</div>
-      <div class="hud-matrix-info">
-        <div class="hud-stat">
-          <span class="hud-label">SCAN RESOLUTION</span>
-          <span class="hud-val">0.25° × 0.25° (~25 KM)</span>
-        </div>
-        <div class="hud-stat">
-          <span class="hud-label">DISCRETE CELLS</span>
-          <span class="hud-val">268,400 PLANETARY SECTORS</span>
-        </div>
-        <div class="hud-stat">
-          <span class="hud-label">TELEMETRY STATUS</span>
-          <span class="hud-val pulse" id="hud-status-text">PROJECTING SURFACE GRID...</span>
-        </div>
-      </div>
-      <div class="hud-progress-wrap">
-        <div class="hud-progress-bar" id="hud-progress-bar"></div>
-      </div>
-    </div>
   </div>
 
   <script src="/assets/vendor/three.min.js"></script>
@@ -1139,14 +999,13 @@
 
       // ====================================================================
       // CINEMATIC TRANSITION TO CHUNKING SIMULATOR
-      // (Scale up, glide to the left, and animate surface chunking grid lines)
+      // (Scale up, glide to the left matching chunking screen coordinates)
       // ====================================================================
       let isTransitioning = false;
 
       function createTransitionGrid(radius, colorHex) {
         const gridGroup = new THREE.Group();
         const latSteps = [-75, -60, -45, -30, -15, 0, 15, 30, 45, 60, 75];
-        const lines = [];
 
         latSteps.forEach(lat => {
           const phi = (90 - lat) * (Math.PI / 180);
@@ -1162,13 +1021,12 @@
           const mat = new THREE.LineBasicMaterial({
             color: isEquator ? 0xffffff : colorHex,
             transparent: true,
-            opacity: 0,
+            opacity: isEquator ? 0.75 : 0.35,
             blending: THREE.AdditiveBlending,
             depthWrite: false
           });
           const line = new THREE.Line(geom, mat);
           gridGroup.add(line);
-          lines.push({ line, mat, baseOpacity: isEquator ? 0.85 : 0.45, y: yRing });
         });
 
         for (let lng = 0; lng < 360; lng += 15) {
@@ -1187,16 +1045,15 @@
           const mat = new THREE.LineBasicMaterial({
             color: isPrime ? 0xffffff : colorHex,
             transparent: true,
-            opacity: 0,
+            opacity: isPrime ? 0.65 : 0.28,
             blending: THREE.AdditiveBlending,
             depthWrite: false
           });
           const line = new THREE.Line(geom, mat);
           gridGroup.add(line);
-          lines.push({ line, mat, baseOpacity: isPrime ? 0.75 : 0.35, y: 0 });
         }
 
-        return { gridGroup, lines };
+        return gridGroup;
       }
 
       function launchPlanetDeparture(planet, targetHref, sourceCanvas) {
@@ -1205,24 +1062,12 @@
 
         const isMars = (planet === 'mars');
         const themeColorHex = isMars ? 0xf97316 : 0x00e5ff;
-        const themeColorCss = isMars ? '#f97316' : '#00e5ff';
         const texturePath = isMars ? '/assets/textures/mars_2k.jpg' : '/assets/textures/moon_2k.jpg';
 
         document.body.classList.add('is-transitioning', isMars ? 'transition-mars' : 'transition-moon');
 
         const overlay = document.getElementById('celestial-transition-overlay');
         const transCanvas = document.getElementById('transition-canvas');
-        const hudBadge = document.getElementById('hud-top-badge');
-        const hudTargetName = document.getElementById('hud-target-name');
-        const hudSubTitle = document.getElementById('hud-sub-title');
-        const hudStatusText = document.getElementById('hud-status-text');
-        const progressBar = document.getElementById('hud-progress-bar');
-
-        if (hudTargetName) hudTargetName.textContent = isMars ? 'ORBITAL INSERTION // MARS SECTOR 01' : 'ORBITAL INSERTION // LUNAR SECTOR 01';
-        if (hudSubTitle) hudSubTitle.textContent = isMars ? 'MAPPING MARS SURFACE CHUNKS' : 'MAPPING LUNAR SURFACE CHUNKS';
-        if (hudBadge) hudBadge.style.color = themeColorCss;
-        if (progressBar) progressBar.style.background = `linear-gradient(90deg, ${themeColorCss} 0%, #ffffff 100%)`;
-
         overlay.classList.add('is-active');
 
         // Measure initial screen position of the clicked 3D canvas
@@ -1275,24 +1120,9 @@
         const atmoMesh = new THREE.Mesh(atmoGeo, atmoMat);
         planetGroup.add(atmoMesh);
 
-        // Holographic 3D Coordinate Grid Lines
-        const { gridGroup, lines } = createTransitionGrid(planetRadius * 1.002, themeColorHex);
+        // Holographic 3D Coordinate Grid Lines (Static clean lines matching chunking simulator)
+        const gridGroup = createTransitionGrid(planetRadius * 1.002, themeColorHex);
         planetGroup.add(gridGroup);
-
-        // Holographic Scanning Laser Ring
-        const scanRingGeo = new THREE.RingGeometry(planetRadius * 0.998, planetRadius * 1.038, 64);
-        scanRingGeo.rotateX(Math.PI / 2);
-        const scanRingMat = new THREE.MeshBasicMaterial({
-          color: themeColorHex,
-          transparent: true,
-          opacity: 0.9,
-          side: THREE.DoubleSide,
-          blending: THREE.AdditiveBlending,
-          depthWrite: false
-        });
-        const scanRing = new THREE.Mesh(scanRingGeo, scanRingMat);
-        scanRing.position.y = planetRadius * 1.15;
-        planetGroup.add(scanRing);
 
         // Calculate initial world position & scale from 2D screen coordinates
         const vHeight = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.z;
@@ -1309,7 +1139,7 @@
         planetGroup.position.set(startWorldX, startWorldY, 0);
         planetGroup.scale.set(startScale, startScale, startScale);
 
-        const duration = 1350; // ms
+        const duration = 580; // ms - snappy, smooth glide
         const startTime = performance.now();
 
         function animateTransition() {
@@ -1328,32 +1158,8 @@
           const currentScale = startScale + (targetScale - startScale) * ease;
           planetGroup.scale.set(currentScale, currentScale, currentScale);
 
-          // 3. Accelerating planetary axial rotation
-          planetGroup.rotation.y += 0.015 + 0.035 * ease;
-
-          // 4. Laser Scan Sweep & Grid Lines reveal
-          const scanY = (planetRadius * 1.15) - (planetRadius * 2.30) * ease;
-          scanRing.position.y = scanY;
-          scanRingMat.opacity = Math.sin(progress * Math.PI) * 0.95;
-
-          // As the scan ring passes, ignite the grid lines progressively
-          lines.forEach(item => {
-            if (item.y >= scanY) {
-              item.mat.opacity = THREE.MathUtils.lerp(item.mat.opacity, item.baseOpacity, 0.12);
-            }
-          });
-
-          // 5. Update HUD status & progress bar
-          if (progressBar) progressBar.style.width = `${Math.round(ease * 100)}%`;
-          if (hudStatusText) {
-            if (progress < 0.35) {
-              hudStatusText.textContent = 'PROJECTING 0.25° SURFACE GRID...';
-            } else if (progress < 0.75) {
-              hudStatusText.textContent = 'CALIBRATING TERRESTRIAL ANALOG SENSORS...';
-            } else {
-              hudStatusText.textContent = 'SYNCHRONIZATION COMPLETE // ENTERING...';
-            }
-          }
+          // 3. Gentle planetary axial rotation during flight
+          planetGroup.rotation.y += 0.012 + 0.02 * (1 - ease);
 
           renderer.render(scene, camera);
 

@@ -2569,10 +2569,6 @@
       // 3D HOLOGRAPHIC PLANETARY GRID SYSTEM (SURFACE CHUNK DIVIDING LINES)
       let planetaryGridGroup = null;
       let planetaryGridLines = [];
-      let gridScanRing = null;
-      let gridScanMat = null;
-      let gridScanProgress = 0;
-      let isGridScanning = false;
 
       function createHolographicPlanetGrid(radius, colorHex) {
         const gridGroup = new THREE.Group();
@@ -2593,7 +2589,7 @@
           const mat = new THREE.LineBasicMaterial({
             color: isEquator ? 0xffffff : colorHex,
             transparent: true,
-            opacity: 0,
+            opacity: isEquator ? 0.75 : 0.35,
             blending: THREE.AdditiveBlending,
             depthWrite: false
           });
@@ -2618,7 +2614,7 @@
           const mat = new THREE.LineBasicMaterial({
             color: isPrime ? 0xffffff : colorHex,
             transparent: true,
-            opacity: 0,
+            opacity: isPrime ? 0.65 : 0.28,
             blending: THREE.AdditiveBlending,
             depthWrite: false
           });
@@ -2634,28 +2630,6 @@
       planetaryGridGroup = marsGridData.gridGroup;
       planetaryGridLines = marsGridData.lines;
       planetGroup.add(planetaryGridGroup);
-
-      // Holographic Laser Scan Ring on Planet Surface
-      const scanRingGeo = new THREE.RingGeometry(planetRadius * 0.998, planetRadius * 1.035, 64);
-      scanRingGeo.rotateX(Math.PI / 2);
-      gridScanMat = new THREE.MeshBasicMaterial({
-        color: 0xf97316,
-        transparent: true,
-        opacity: 0,
-        side: THREE.DoubleSide,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false
-      });
-      gridScanRing = new THREE.Mesh(scanRingGeo, gridScanMat);
-      gridScanRing.position.y = planetRadius * 1.15;
-      planetGroup.add(gridScanRing);
-
-      // Trigger entrance scan transition for grid lines
-      function triggerGridScanEntrance() {
-        gridScanProgress = 0;
-        isGridScanning = true;
-      }
-      setTimeout(triggerGridScanEntrance, 400);
 
       // 3D VOLUMETRIC SPHERICAL BEACON (SLEEK HOLOGRAPHIC HEMISPHERE LANDING POINT)
       const beaconGroup = new THREE.Group();
@@ -3172,30 +3146,6 @@
           domeMat.opacity = 0.45 + 0.20 * Math.sin(t);
           if (baseRingMat) {
             baseRingMat.opacity = 0.60 + 0.25 * Math.cos(t);
-          }
-        }
-
-        // Animated Grid Scan Reveal Transition
-        if (isGridScanning) {
-          gridScanProgress += 0.016;
-          const t = Math.min(1.0, gridScanProgress);
-          const ease = 1 - Math.pow(1 - t, 3);
-          const scanY = (planetRadius * 1.15) - (planetRadius * 2.30) * ease;
-          if (gridScanRing && gridScanMat) {
-            gridScanRing.position.y = scanY;
-            gridScanMat.opacity = Math.sin(t * Math.PI) * 0.85;
-          }
-          planetaryGridLines.forEach(item => {
-            if (item.y >= scanY) {
-              item.mat.opacity = THREE.MathUtils.lerp(item.mat.opacity, item.baseOpacity, 0.14);
-            }
-          });
-          if (t >= 1.0) {
-            isGridScanning = false;
-            if (gridScanRing && gridScanMat) gridScanMat.opacity = 0;
-            planetaryGridLines.forEach(item => {
-              item.mat.opacity = item.baseOpacity;
-            });
           }
         }
 

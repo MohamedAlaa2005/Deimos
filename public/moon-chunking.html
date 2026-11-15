@@ -2566,6 +2566,97 @@
       const atmoMesh = new THREE.Mesh(atmoGeo, atmoMat);
       planetGroup.add(atmoMesh);
 
+      // 3D HOLOGRAPHIC PLANETARY GRID SYSTEM (SURFACE CHUNK DIVIDING LINES)
+      let planetaryGridGroup = null;
+      let planetaryGridLines = [];
+      let gridScanRing = null;
+      let gridScanMat = null;
+      let gridScanProgress = 0;
+      let isGridScanning = false;
+
+      function createHolographicPlanetGrid(radius, colorHex) {
+        const gridGroup = new THREE.Group();
+        const latSteps = [-75, -60, -45, -30, -15, 0, 15, 30, 45, 60, 75];
+        const lines = [];
+
+        latSteps.forEach(lat => {
+          const phi = (90 - lat) * (Math.PI / 180);
+          const rRing = radius * Math.sin(phi);
+          const yRing = radius * Math.cos(phi);
+          const points = [];
+          for (let i = 0; i <= 64; i++) {
+            const theta = (i / 64) * Math.PI * 2;
+            points.push(new THREE.Vector3(rRing * Math.cos(theta), yRing, rRing * Math.sin(theta)));
+          }
+          const geom = new THREE.BufferGeometry().setFromPoints(points);
+          const isEquator = lat === 0;
+          const mat = new THREE.LineBasicMaterial({
+            color: isEquator ? 0xffffff : colorHex,
+            transparent: true,
+            opacity: 0,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
+          });
+          const line = new THREE.Line(geom, mat);
+          gridGroup.add(line);
+          lines.push({ line, mat, baseOpacity: isEquator ? 0.75 : 0.35, y: yRing });
+        });
+
+        for (let lng = 0; lng < 360; lng += 15) {
+          const points = [];
+          const theta = (lng + 180) * (Math.PI / 180);
+          for (let i = 0; i <= 48; i++) {
+            const lat = -90 + (i / 48) * 180;
+            const phi = (90 - lat) * (Math.PI / 180);
+            const x = -(radius * Math.sin(phi) * Math.cos(theta));
+            const z = radius * Math.sin(phi) * Math.sin(theta);
+            const y = radius * Math.cos(phi);
+            points.push(new THREE.Vector3(x, y, z));
+          }
+          const geom = new THREE.BufferGeometry().setFromPoints(points);
+          const isPrime = (lng === 0 || lng === 180);
+          const mat = new THREE.LineBasicMaterial({
+            color: isPrime ? 0xffffff : colorHex,
+            transparent: true,
+            opacity: 0,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
+          });
+          const line = new THREE.Line(geom, mat);
+          gridGroup.add(line);
+          lines.push({ line, mat, baseOpacity: isPrime ? 0.65 : 0.28, y: 0 });
+        }
+
+        return { gridGroup, lines };
+      }
+
+      const moonGridData = createHolographicPlanetGrid(planetRadius * 1.002, 0x00e5ff);
+      planetaryGridGroup = moonGridData.gridGroup;
+      planetaryGridLines = moonGridData.lines;
+      planetGroup.add(planetaryGridGroup);
+
+      // Holographic Laser Scan Ring on Planet Surface
+      const scanRingGeo = new THREE.RingGeometry(planetRadius * 0.998, planetRadius * 1.035, 64);
+      scanRingGeo.rotateX(Math.PI / 2);
+      gridScanMat = new THREE.MeshBasicMaterial({
+        color: 0x00e5ff,
+        transparent: true,
+        opacity: 0,
+        side: THREE.DoubleSide,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+      gridScanRing = new THREE.Mesh(scanRingGeo, gridScanMat);
+      gridScanRing.position.y = planetRadius * 1.15;
+      planetGroup.add(gridScanRing);
+
+      // Trigger entrance scan transition for grid lines
+      function triggerGridScanEntrance() {
+        gridScanProgress = 0;
+        isGridScanning = true;
+      }
+      setTimeout(triggerGridScanEntrance, 400);
+
       // 3D VOLUMETRIC SPHERICAL BEACON (SLEEK HOLOGRAPHIC HEMISPHERE LANDING POINT)
       const beaconGroup = new THREE.Group();
       beaconGroup.visible = false;
@@ -3084,6 +3175,30 @@
           }
         }
 
+        // Animated Grid Scan Reveal Transition
+        if (isGridScanning) {
+          gridScanProgress += 0.016;
+          const t = Math.min(1.0, gridScanProgress);
+          const ease = 1 - Math.pow(1 - t, 3);
+          const scanY = (planetRadius * 1.15) - (planetRadius * 2.30) * ease;
+          if (gridScanRing && gridScanMat) {
+            gridScanRing.position.y = scanY;
+            gridScanMat.opacity = Math.sin(t * Math.PI) * 0.85;
+          }
+          planetaryGridLines.forEach(item => {
+            if (item.y >= scanY) {
+              item.mat.opacity = THREE.MathUtils.lerp(item.mat.opacity, item.baseOpacity, 0.14);
+            }
+          });
+          if (t >= 1.0) {
+            isGridScanning = false;
+            if (gridScanRing && gridScanMat) gridScanMat.opacity = 0;
+            planetaryGridLines.forEach(item => {
+              item.mat.opacity = item.baseOpacity;
+            });
+          }
+        }
+
         renderer.render(scene, camera);
       }
       animate();
@@ -3097,11 +3212,17 @@
           if (locateCoordsBtn) {
             locateCoordsBtn.innerHTML = '<span style="font-size:14px;">⊞</span><span>LOCATE & LOCK GRID CHUNK</span>';
           }
+          if (planetaryGridLines.length) {
+            planetaryGridLines.forEach(item => { item.mat.opacity = item.baseOpacity; });
+          }
         } else {
           if (modePointBtn) modePointBtn.classList.add('is-active');
           if (modeChunkBtn) modeChunkBtn.classList.remove('is-active');
           if (locateCoordsBtn) {
             locateCoordsBtn.innerHTML = '<span style="font-size:14px;">⦿</span><span>LOCATE & LOCK EXACT POINT</span>';
+          }
+          if (planetaryGridLines.length) {
+            planetaryGridLines.forEach(item => { item.mat.opacity = item.baseOpacity * 0.35; });
           }
         }
 

@@ -893,36 +893,21 @@
       }
 
       // ====================================================================
-      // SEAMLESS SINGLE-PAGE NAVIGATION TO CHUNKING SIMULATOR
-      // (Native View Transition + Instant Pre-warmed Route Switching)
+      // SEAMLESS SINGLE-PAGE NAVIGATION & BFCACHE STATE RESTORATION
       // ====================================================================
-      function navigateToChunking(targetUrl) {
-        if ('startViewTransition' in document) {
-          document.startViewTransition(() => {
-            window.location.href = targetUrl;
-          });
-        } else {
-          document.body.style.transition = 'opacity 0.16s cubic-bezier(0.16, 1, 0.3, 1)';
-          document.body.style.opacity = '0.6';
-          setTimeout(() => {
-            window.location.href = targetUrl;
-          }, 120);
-        }
+      function resetPageState() {
+        document.body.style.opacity = '1';
+        document.body.style.pointerEvents = 'auto';
+        document.body.classList.remove('is-transitioning', 'transition-mars', 'transition-moon');
+        const staleOverlay = document.getElementById('celestial-transition-overlay');
+        if (staleOverlay) staleOverlay.remove();
+        const staleCanvas = document.getElementById('transition-canvas');
+        if (staleCanvas) staleCanvas.remove();
       }
 
-      if (cardMars) {
-        cardMars.addEventListener('click', (e) => {
-          e.preventDefault();
-          navigateToChunking('/mars-chunking.html');
-        });
-      }
-
-      if (cardMoon) {
-        cardMoon.addEventListener('click', (e) => {
-          e.preventDefault();
-          navigateToChunking('/moon-chunking.html');
-        });
-      }
+      window.addEventListener('pageshow', resetPageState);
+      window.addEventListener('load', resetPageState);
+      resetPageState();
     })();
   </script>
 </body>

@@ -11,7 +11,20 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&family=JetBrains+Mono:wght@400;500;600;700&family=Syne:wght@700;800;850&display=block">
+  <link rel="prefetch" href="/mars-chunking.html">
+  <link rel="prefetch" href="/moon-chunking.html">
   <style>
+    @view-transition {
+      navigation: auto;
+    }
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: 0.25s;
+      animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .header {
+      view-transition-name: site-header;
+    }
     :root {
       --bg: #000000;
       --ink: #ffffff;
@@ -403,98 +416,37 @@
       z-index: 2;
     }
 
-    /* ORBITAL RETICLE BACKGROUND RING */
-    .orbital-reticle {
-      position: absolute;
-      width: 290px;
-      height: 290px;
-      border-radius: 50%;
-      border: 1px dashed rgba(255, 255, 255, 0.16);
-      pointer-events: none;
-      transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-                  border-color 0.4s ease,
-                  opacity 0.4s ease;
-    }
-
     .celestial-canvas {
       width: 260px;
       height: 260px;
       border-radius: 50%;
       filter: drop-shadow(0 0 38px rgba(0,0,0,0.85));
-      transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
-                  filter 0.5s ease,
-                  opacity 0.45s ease;
+      transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+                  filter 0.4s ease;
       cursor: pointer;
       position: relative;
       z-index: 3;
     }
 
-    /* ==================================================================== */
-    /* ULTRA-CREATIVE OPPOSITE-DIRECTION HOVER ORBIT MECHANICS               */
-    /* ==================================================================== */
-
-    /* HOVER MOON CARD (RIGHT CARD):
-       MOON SWOOPS ACROSS TOWARD THE LEFT (OPPOSITE DIRECTION)
-       WHILE MARS MOVES TO THE RIGHT IN BACKGROUND RECESSION */
-    .portal-grid.hover-moon .card-moon {
-      border-color: var(--moon-glow);
-      box-shadow: 0 32px 84px rgba(226, 232, 240, 0.36), 0 0 0 1px var(--moon-glow);
-      transform: translateY(-8px);
+    /* CLEAN REFINED HOVER STATES */
+    .portal-card:hover {
+      transform: translateY(-6px);
     }
-    .portal-grid.hover-moon .card-moon .celestial-canvas {
-      transform: translate(-130px, -16px) scale(1.18);
-      filter: drop-shadow(0 0 68px rgba(226, 232, 240, 0.65));
-    }
-    .portal-grid.hover-moon .card-moon .orbital-reticle {
-      transform: translate(-130px, -16px) rotate(-90deg) scale(1.12);
-      border-color: rgba(226, 232, 240, 0.6);
-    }
-
-    /* RECIPROCAL MOTION ON MARS CARD (LEFT CARD) */
-    .portal-grid.hover-moon .card-mars {
-      border-color: rgba(255, 255, 255, 0.14);
-      opacity: 0.75;
-    }
-    .portal-grid.hover-moon .card-mars .celestial-canvas {
-      transform: translate(65px, 12px) scale(0.85);
-      opacity: 0.55;
-      filter: blur(1.2px) drop-shadow(0 0 20px rgba(249, 115, 22, 0.28));
-    }
-    .portal-grid.hover-moon .card-mars .orbital-reticle {
-      transform: translate(65px, 12px) scale(0.85);
-      opacity: 0.35;
-    }
-
-    /* HOVER MARS CARD (LEFT CARD):
-       MARS SWOOPS ACROSS TOWARD THE RIGHT (OPPOSITE DIRECTION)
-       WHILE MOON MOVES TO THE LEFT IN BACKGROUND RECESSION */
-    .portal-grid.hover-mars .card-mars {
+    .card-mars:hover {
       border-color: var(--mars-glow);
-      box-shadow: 0 32px 84px rgba(249, 115, 22, 0.4), 0 0 0 1px var(--mars-glow);
-      transform: translateY(-8px);
+      box-shadow: 0 24px 60px rgba(249, 115, 22, 0.35), 0 0 0 1px var(--mars-glow);
     }
-    .portal-grid.hover-mars .card-mars .celestial-canvas {
-      transform: translate(130px, -16px) scale(1.18);
-      filter: drop-shadow(0 0 68px rgba(249, 115, 22, 0.75));
+    .card-mars:hover .celestial-canvas {
+      transform: scale(1.06);
+      filter: drop-shadow(0 0 45px rgba(249, 115, 22, 0.55));
     }
-    .portal-grid.hover-mars .card-mars .orbital-reticle {
-      transform: translate(130px, -16px) rotate(90deg) scale(1.12);
-      border-color: rgba(249, 115, 22, 0.6);
+    .card-moon:hover {
+      border-color: var(--moon-glow);
+      box-shadow: 0 24px 60px rgba(226, 232, 240, 0.3), 0 0 0 1px var(--moon-glow);
     }
-
-    /* RECIPROCAL MOTION ON MOON CARD (RIGHT CARD) */
-    .portal-grid.hover-mars .card-moon {
-      border-color: rgba(255, 255, 255, 0.14);
-      opacity: 0.75;
-    }
-    .portal-grid.hover-mars .card-moon .celestial-canvas {
-      transform: translate(-65px, 12px) scale(0.85);
-      opacity: 0.55;
-      filter: blur(1.2px) drop-shadow(0 0 20px rgba(226, 232, 240, 0.25));
-    }
-    .portal-grid.hover-mars .card-moon .orbital-reticle {
-      transform: translate(-65px, 12px) scale(0.85);
-      opacity: 0.35;
+    .card-moon:hover .celestial-canvas {
+      transform: scale(1.06);
+      filter: drop-shadow(0 0 45px rgba(226, 232, 240, 0.5));
     }
 
     /* CARD TITLES */
@@ -619,58 +571,8 @@
       .container { padding: 110px 16px 40px; }
       .celestial-stage { height: 230px; }
       .celestial-canvas { width: 200px; height: 200px; }
-      .orbital-reticle { width: 220px; height: 220px; }
       .binary-orbit-visual { display: none; }
-      .portal-grid.hover-moon .card-moon .celestial-canvas { transform: translate(-30px, -10px) scale(1.08); }
-      .portal-grid.hover-mars .card-mars .celestial-canvas { transform: translate(30px, -10px) scale(1.08); }
       .earth-strip { flex-direction: column; gap: 8px; text-align: center; border-radius: 18px; }
-    }
-
-    /* ==================================================================== */
-    /* CINEMATIC CELESTIAL TRANSITION TO CHUNKING SIMULATOR                 */
-    /* ==================================================================== */
-    body.is-transitioning .container,
-    body.is-transitioning .header {
-      opacity: 0 !important;
-      filter: blur(14px) !important;
-      transform: scale(0.96) !important;
-      pointer-events: none !important;
-      transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1) !important;
-    }
-    body.transition-mars #card-moon {
-      transform: scale(0.65) translateX(140px) !important;
-      opacity: 0 !important;
-      filter: blur(10px) !important;
-      transition: all 0.55s ease !important;
-    }
-    body.transition-moon #card-mars {
-      transform: scale(0.65) translateX(-140px) !important;
-      opacity: 0 !important;
-      filter: blur(10px) !important;
-      transition: all 0.55s ease !important;
-    }
-    .celestial-transition-overlay {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 9999;
-      pointer-events: none;
-      opacity: 0;
-      background: #000000;
-      transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      overflow: hidden;
-    }
-    .celestial-transition-overlay.is-active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .transition-canvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      display: block;
     }
   </style>
 </head>
@@ -728,7 +630,6 @@
         <!-- MARS CARD (LEFT) -->
         <a class="portal-card card-mars" id="card-mars" href="/mars-chunking.html" title="Explore Mars Chunking Simulator">
           <div class="celestial-stage">
-            <div class="orbital-reticle" aria-hidden="true"></div>
             <canvas id="mars-canvas" class="celestial-canvas" width="300" height="300" aria-label="Mars 3D Celestial Body"></canvas>
           </div>
 
@@ -763,7 +664,6 @@
         <!-- MOON CARD (RIGHT) -->
         <a class="portal-card card-moon" id="card-moon" href="/moon-chunking.html" title="Explore Moon Chunking Simulator">
           <div class="celestial-stage">
-            <div class="orbital-reticle" aria-hidden="true"></div>
             <canvas id="moon-canvas" class="celestial-canvas" width="300" height="300" aria-label="Moon 3D Celestial Body"></canvas>
           </div>
 
@@ -831,11 +731,6 @@
       <div class="mono" style="color:var(--accent-soft);">Inspect 5-Vector Similarity Matrix →</div>
     </a>
   </main>
-
-  <!-- CINEMATIC CELESTIAL TRANSITION STAGE TO CHUNKING SIMULATOR -->
-  <div id="celestial-transition-overlay" class="celestial-transition-overlay" aria-hidden="true">
-    <canvas id="transition-canvas" class="transition-canvas"></canvas>
-  </div>
 
   <script src="/assets/vendor/three.min.js"></script>
   <!-- REAL 3D NASA 2K SPHERES WITH DYNAMIC AXIAL SPIN & HOVER ORBIT PHYSICS -->
@@ -998,194 +893,34 @@
       }
 
       // ====================================================================
-      // CINEMATIC TRANSITION TO CHUNKING SIMULATOR
-      // (Scale up, glide to the left matching chunking screen coordinates)
+      // SEAMLESS SINGLE-PAGE NAVIGATION TO CHUNKING SIMULATOR
+      // (Native View Transition + Instant Pre-warmed Route Switching)
       // ====================================================================
-      let isTransitioning = false;
-
-      function createTransitionGrid(radius, colorHex) {
-        const gridGroup = new THREE.Group();
-        const latSteps = [-75, -60, -45, -30, -15, 0, 15, 30, 45, 60, 75];
-
-        latSteps.forEach(lat => {
-          const phi = (90 - lat) * (Math.PI / 180);
-          const rRing = radius * Math.sin(phi);
-          const yRing = radius * Math.cos(phi);
-          const points = [];
-          for (let i = 0; i <= 64; i++) {
-            const theta = (i / 64) * Math.PI * 2;
-            points.push(new THREE.Vector3(rRing * Math.cos(theta), yRing, rRing * Math.sin(theta)));
-          }
-          const geom = new THREE.BufferGeometry().setFromPoints(points);
-          const isEquator = lat === 0;
-          const mat = new THREE.LineBasicMaterial({
-            color: isEquator ? 0xffffff : colorHex,
-            transparent: true,
-            opacity: isEquator ? 0.75 : 0.35,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false
+      function navigateToChunking(targetUrl) {
+        if ('startViewTransition' in document) {
+          document.startViewTransition(() => {
+            window.location.href = targetUrl;
           });
-          const line = new THREE.Line(geom, mat);
-          gridGroup.add(line);
-        });
-
-        for (let lng = 0; lng < 360; lng += 15) {
-          const points = [];
-          const theta = (lng + 180) * (Math.PI / 180);
-          for (let i = 0; i <= 48; i++) {
-            const lat = -90 + (i / 48) * 180;
-            const phi = (90 - lat) * (Math.PI / 180);
-            const x = -(radius * Math.sin(phi) * Math.cos(theta));
-            const z = radius * Math.sin(phi) * Math.sin(theta);
-            const y = radius * Math.cos(phi);
-            points.push(new THREE.Vector3(x, y, z));
-          }
-          const geom = new THREE.BufferGeometry().setFromPoints(points);
-          const isPrime = (lng === 0 || lng === 180);
-          const mat = new THREE.LineBasicMaterial({
-            color: isPrime ? 0xffffff : colorHex,
-            transparent: true,
-            opacity: isPrime ? 0.65 : 0.28,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false
-          });
-          const line = new THREE.Line(geom, mat);
-          gridGroup.add(line);
+        } else {
+          document.body.style.transition = 'opacity 0.16s cubic-bezier(0.16, 1, 0.3, 1)';
+          document.body.style.opacity = '0.6';
+          setTimeout(() => {
+            window.location.href = targetUrl;
+          }, 120);
         }
-
-        return gridGroup;
-      }
-
-      function launchPlanetDeparture(planet, targetHref, sourceCanvas) {
-        if (isTransitioning) return;
-        isTransitioning = true;
-
-        const isMars = (planet === 'mars');
-        const themeColorHex = isMars ? 0xf97316 : 0x00e5ff;
-        const texturePath = isMars ? '/assets/textures/mars_2k.jpg' : '/assets/textures/moon_2k.jpg';
-
-        document.body.classList.add('is-transitioning', isMars ? 'transition-mars' : 'transition-moon');
-
-        const overlay = document.getElementById('celestial-transition-overlay');
-        const transCanvas = document.getElementById('transition-canvas');
-        overlay.classList.add('is-active');
-
-        // Measure initial screen position of the clicked 3D canvas
-        const rect = sourceCanvas.getBoundingClientRect();
-        const startCenterX = rect.left + rect.width / 2;
-        const startCenterY = rect.top + rect.height / 2;
-        const startDiameterPx = rect.width;
-
-        // Initialize Transition Three.js Scene
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 0, 3.6);
-
-        const renderer = new THREE.WebGLRenderer({ canvas: transCanvas, alpha: true, antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-        const sun = new THREE.DirectionalLight(0xffffff, 2.8);
-        sun.position.set(-6, 3, 5);
-        scene.add(sun);
-
-        const ambient = new THREE.AmbientLight(isMars ? 0x382015 : 0x222233, 0.6);
-        scene.add(ambient);
-
-        // Planet Group
-        const planetGroup = new THREE.Group();
-        scene.add(planetGroup);
-
-        const planetRadius = 1.05;
-        const texture = new THREE.TextureLoader().load(texturePath);
-        if (THREE.SRGBColorSpace) texture.colorSpace = THREE.SRGBColorSpace;
-
-        const sphereGeo = new THREE.SphereGeometry(planetRadius, 128, 128);
-        const sphereMat = new THREE.MeshStandardMaterial({
-          map: texture,
-          roughness: 0.88,
-          metalness: 0.04
-        });
-        const planetMesh = new THREE.Mesh(sphereGeo, sphereMat);
-        planetGroup.add(planetMesh);
-
-        // Atmospheric Glow
-        const atmoGeo = new THREE.SphereGeometry(planetRadius * 1.03, 64, 64);
-        const atmoMat = new THREE.MeshBasicMaterial({
-          color: themeColorHex,
-          transparent: true,
-          opacity: isMars ? 0.22 : 0.16,
-          side: THREE.BackSide
-        });
-        const atmoMesh = new THREE.Mesh(atmoGeo, atmoMat);
-        planetGroup.add(atmoMesh);
-
-        // Holographic 3D Coordinate Grid Lines (Static clean lines matching chunking simulator)
-        const gridGroup = createTransitionGrid(planetRadius * 1.002, themeColorHex);
-        planetGroup.add(gridGroup);
-
-        // Calculate initial world position & scale from 2D screen coordinates
-        const vHeight = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.z;
-        const vWidth = vHeight * camera.aspect;
-
-        const startWorldX = ((startCenterX / window.innerWidth) - 0.5) * vWidth;
-        const startWorldY = -((startCenterY / window.innerHeight) - 0.5) * vHeight;
-        const startScale = (startDiameterPx / window.innerHeight) * (vHeight / (planetRadius * 2));
-
-        const targetWorldX = window.innerWidth <= 900 ? 0 : -0.68;
-        const targetWorldY = window.innerWidth <= 900 ? 0.35 : 0;
-        const targetScale = 1.0;
-
-        planetGroup.position.set(startWorldX, startWorldY, 0);
-        planetGroup.scale.set(startScale, startScale, startScale);
-
-        const duration = 580; // ms - snappy, smooth glide
-        const startTime = performance.now();
-
-        function animateTransition() {
-          const now = performance.now();
-          const elapsed = now - startTime;
-          const progress = Math.min(1.0, elapsed / duration);
-
-          // Smooth cubic ease-out curve
-          const ease = 1 - Math.pow(1 - progress, 3);
-
-          // 1. Interpolate position from card center to chunking screen left
-          planetGroup.position.x = startWorldX + (targetWorldX - startWorldX) * ease;
-          planetGroup.position.y = startWorldY + (targetWorldY - startWorldY) * ease;
-
-          // 2. Interpolate scale from card size to full chunking size
-          const currentScale = startScale + (targetScale - startScale) * ease;
-          planetGroup.scale.set(currentScale, currentScale, currentScale);
-
-          // 3. Gentle planetary axial rotation during flight
-          planetGroup.rotation.y += 0.012 + 0.02 * (1 - ease);
-
-          renderer.render(scene, camera);
-
-          if (progress < 1.0) {
-            requestAnimationFrame(animateTransition);
-          } else {
-            window.location.href = targetHref;
-          }
-        }
-
-        requestAnimationFrame(animateTransition);
       }
 
       if (cardMars) {
         cardMars.addEventListener('click', (e) => {
           e.preventDefault();
-          const marsCanvas = document.getElementById('mars-canvas');
-          launchPlanetDeparture('mars', '/mars-chunking.html', marsCanvas || cardMars);
+          navigateToChunking('/mars-chunking.html');
         });
       }
 
       if (cardMoon) {
         cardMoon.addEventListener('click', (e) => {
           e.preventDefault();
-          const moonCanvas = document.getElementById('moon-canvas');
-          launchPlanetDeparture('moon', '/moon-chunking.html', moonCanvas || cardMoon);
+          navigateToChunking('/moon-chunking.html');
         });
       }
     })();
